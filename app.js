@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require("express-session");
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -25,8 +26,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'assets')));
 
+// Session storage
+var sessionConfig = {
+  secret: 'goodshitgoodshitthat\'ssomegoodshitrightthere',
+  cookie: {
+    maxAge: 60000
+  }
+}
+if (app.get('env') === 'production') {
+  sessionConfig.cookie.secure = true;
+  app.set('trust proxy', 1);
+
+  var serverConfig = require("./config.json");
+  sessionConfig.secret = serverConfig.secret;
+}
+
+app.use(session(sessionConfig));
+
 app.use('/', routes);
 app.use('/users', users);
+app.use('/polls', require("./routes/polls"));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

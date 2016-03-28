@@ -3,13 +3,21 @@ var router = express.Router();
 var models = require('../models');
 var _ = require('underscore');
 
+var errors = require("../lib/errors");
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
   models.Poll.findAll()
     .then((polls) => {
-      polls = _.pluck(polls, 'name');
-      res.render('index', { title: 'Express', stuff: polls });
-    });
+      polls = polls.map((poll) => {
+        return {
+          name: poll.name,
+          id: poll.id
+        };
+      });
+      res.render('index', { title: 'Express', polls: polls });
+    })
+    .catch(errors(req, res));
 });
 
 module.exports = router;

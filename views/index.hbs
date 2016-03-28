@@ -2,7 +2,7 @@
 <p>Welcome to {{title}}</p>
 
 <ul>
-  {{#each stuff}}
-    <li>{{this}}</li>
+  {{#each polls}}
+    <li><a href="/polls/{{id}}">{{name}}</a></li>
   {{/each}}
 </ul>
